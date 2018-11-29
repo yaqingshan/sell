@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <top-head></top-head>
-    <tab></tab>
+    <common-head></common-head>
+    <common-tab></common-tab>
     <router-view/>
   </div>
 </template>
 
 <script>
-import Tab from '@/common/tab/Tab'
-import TopHead from '@/common/head/Head'
+import CommonTab from '@/common/tab/Tab'
+import CommonHead from '@/common/head/Head'
 export default {
   name: 'App',
   components: {
-    Tab,
-    TopHead
+    CommonTab,
+    CommonHead
   }
 }
 </script>
