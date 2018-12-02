@@ -1,0 +1,6 @@
+// 图片背景函数 可传入图片路径
+bg-image($url)
+  background:url($url+'@2x.png')
+  background-size:cover
+  @media(-webkit-min-device-pixel-radio:3),(min-device-pixel-radio:3)
+    background:url($url+'@3x.png')
