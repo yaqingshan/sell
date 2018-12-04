@@ -2,7 +2,11 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li class="menu-item border-bottom" v-for="(item,index) in goods" :key="index">
+        <li class="menu-item border-bottom"
+            v-for="(item,index) in goods"
+            :key="index"
+            :class="{'current':currentIndex === index}"
+            @click="selectMenu(index,$event)">
           <div class="txt">
             <span v-show="item.type > 0" class="icon" :class="types[item.type]"></span>{{item.name}}
         </div>
@@ -53,7 +57,8 @@ export default {
     return {
       goods: [],
       types: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
-      heightList: []
+      heightList: [],
+      scrollY: 0
     }
   },
   methods: {
@@ -66,40 +71,60 @@ export default {
       res = res.data
       if (res.errno === ERRORCODE) {
         this.goods = res.goods
+        // $nextTick 是在下次DOM更新循环结束之后执行延迟回调,在修改数据之后使用
+        // $nextTick 则可以在回调中获取更新后的DOM,(页面渲染完成之后调用)
+        this.$nextTick(() => {
+          this.initScroll()
+          this.calculateHeight()
+        })
       }
     },
     initScroll () {
-      this.menuScroll = new BScroll(this.$refs.menuWrapper, { click: true, tap: true })
-      this.foodScroll = new BScroll(this.$refs.foodWrapper, { click: true, tap: true })
+      this.menuScroll = new BScroll(this.$refs.menuWrapper, {click: true, tap: true})
+      this.foodScroll = new BScroll(this.$refs.foodWrapper, {click: true, tap: true, probeType: 3})
+      // probeType: 3 参数设置 滚动时返回实时位置
+      this.foodScroll.on('scroll', (pos) => {
+        // console.log(pos)
+        this.scrollY = Math.abs(Math.round(pos.y))
+      })
     },
     calculateHeight () {
       // 获取所有类名为 food-list-hook 的元素集合
       let foodList = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
-      console.log(foodList.length)
       // 初始高度为0
       let height = 0
       this.heightList.push(height)
       for (let i = 0; i < foodList.length; i++) {
-        console.log(foodList[i])
         let tempitem = foodList[i]
-
         height += tempitem.clientHeight
-        console.log(height)
         this.heightList.push(height)
       }
       // console.log(this.heightList)
+    },
+    selectMenu (index, event) {
+      // 阻止pc访问时点击事件触发
+      if (!event._constructed) {
+        return false
+      }
+      let foodList = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
+      let el = foodList[index]
+      this.foodScroll.scrollToElement(el, 200)
     }
   },
   computed: {
-
+    currentIndex () {
+      for (let i = 0; i < this.heightList.length; i++) {
+        let h1 = this.heightList[i]
+        let h2 = this.heightList[i + 1]
+        if (!h2 || (this.scrollY >= h1 && this.scrollY < h2)) {
+          return i
+        }
+      }
+      return 0
+    }
   },
   mounted () {
     this.getData()
-    this.initScroll()
-
-  },
-  updated () {
-    this.calculateHeight()
   }
 }
 </script>
@@ -122,9 +147,14 @@ export default {
     background: #f3f5f7
     .menu-item
       display: table
-      margin: 0 .24rem
+      width: 100%
+      box-sizing: border-box
+      padding: 0 .24rem
       height: 1.08rem
       line-height: 150%
+      &.current
+        background: #fff
+        font-weight: 700
       &:last-child
         &.border-bottom::before
           border-bottom: 0
