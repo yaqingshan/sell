@@ -1,18 +1,20 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" ref="menuWrapper">
       <ul>
         <li class="menu-item border-bottom" v-for="(item,index) in goods" :key="index">
-          <span>111</span>{{item.name}}
+          <div class="txt">
+            <span v-show="item.type > 0" class="icon" :class="types[item.type]"></span>{{item.name}}
+        </div>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
+    <div class="foods-wrapper" ref="foodWrapper">
       <ul>
-        <li class="food-item" v-for="(item,index) in goods" :key="index">
+        <li class="food-list-item food-list-hook" v-for="(item,index) in goods" :key="index">
           <h3 class="border-left">{{item.name}}</h3>
           <ul>
-            <li class="food-li" v-for="(food,index) in item.foods" :key="index">
+            <li class="food-item" v-for="(food,index) in item.foods" :key="index">
               <div class="food border-bottom">
                 <div class="img">
                   <img :src="food.icon" />
@@ -41,6 +43,7 @@
 
 <script>
 import axios from 'axios'
+import BScroll from 'better-scroll'
 const ERRORCODE = 0
 export default {
   name: 'Goods',
@@ -48,7 +51,9 @@ export default {
   },
   data () {
     return {
-      goods: []
+      goods: [],
+      types: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
+      heightList: []
     }
   },
   methods: {
@@ -62,15 +67,45 @@ export default {
       if (res.errno === ERRORCODE) {
         this.goods = res.goods
       }
+    },
+    initScroll () {
+      this.menuScroll = new BScroll(this.$refs.menuWrapper, { click: true, tap: true })
+      this.foodScroll = new BScroll(this.$refs.foodWrapper, { click: true, tap: true })
+    },
+    calculateHeight () {
+      // 获取所有类名为 food-list-hook 的元素集合
+      let foodList = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
+      console.log(foodList.length)
+      // 初始高度为0
+      let height = 0
+      this.heightList.push(height)
+      for (let i = 0; i < foodList.length; i++) {
+        console.log(foodList[i])
+        let tempitem = foodList[i]
+
+        height += tempitem.clientHeight
+        console.log(height)
+        this.heightList.push(height)
+      }
+      // console.log(this.heightList)
     }
+  },
+  computed: {
+
   },
   mounted () {
     this.getData()
+    this.initScroll()
+
+  },
+  updated () {
+    this.calculateHeight()
   }
 }
 </script>
 
 <style lang="stylus" scoped="scoped">
+@import '~styles/mixins'
 .border-left::before
   border-left: 3px solid #d9dde1!important
 .goods
@@ -83,17 +118,40 @@ export default {
   display: flex
   .menu-wrapper
     flex: 0 0 1.6rem
+    width: 1.6rem
     background: #f3f5f7
     .menu-item
       display: table
       margin: 0 .24rem
       height: 1.08rem
       line-height: 150%
-      span
-        display: inline-block!important
+      &:last-child
+        &.border-bottom::before
+          border-bottom: 0
+      .txt
+        display:table-cell
+        vertical-align: middle
+        .icon
+          display: inline-block
+          margin-right: .04rem
+          position: relative
+          top: .02rem
+          width: .24rem
+          height: .24rem
+          overflow: hidden
+          &.decrease
+            bg-image('images/decrease_3')
+          &.discount
+            bg-image('images/discount_3')
+          &.guarantee
+            bg-image('images/guarantee_3')
+          &.invoice
+            bg-image('images/invoice_3')
+          &.special
+            bg-image('images/special_3')
   .foods-wrapper
     flex: 1
-    .food-item
+    .food-list-item
       h3
         background: #f3f5f7
         height: .52rem
@@ -101,7 +159,7 @@ export default {
         padding-left: .28rem
         font-size: .24rem
         color: rgb(147,153,159)
-      .food-li
+      .food-item
         padding: 0 .36rem
         .food
           padding: .36rem 0
@@ -120,12 +178,12 @@ export default {
             h4
               font-size: .28rem
               color: rgb(7,17,27)
-              line-height: 150%
             .desc, .sale
               font-size: .2rem
               color: rgb(147,153,159)
             .desc
               padding: .16rem 0
+              line-height: 150%
             .price
               padding-top: .16rem
               font-size: .2rem
@@ -139,6 +197,6 @@ export default {
                 text-decoration: line-through
                 font-weight: 700
         &:last-child
-          .food.border-bottom
-            border: 0
+          .food.border-bottom::before
+            border-bottom: 0
 </style>
