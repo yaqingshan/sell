@@ -1,5 +1,7 @@
 {
   "errno": 0,
+  "minPrice": 20,
+  "deliveryPrice": 4,
   "goods": [{
       "name": "热销榜",
       "type": -1,

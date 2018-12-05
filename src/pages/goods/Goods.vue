@@ -44,7 +44,7 @@
         </ul>
       </div>
     </div>
-    <shop-cart></shop-cart>
+    <shop-cart :minPrice="minPrice" :deliveryPrice="deliveryPrice"></shop-cart>
   </div>
 </template>
 
@@ -63,7 +63,9 @@ export default {
       goods: [],
       types: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
       heightList: [],
-      scrollY: 0
+      scrollY: 0,
+      minPrice: null,
+      deliveryPrice: null
     }
   },
   methods: {
@@ -76,6 +78,8 @@ export default {
       res = res.data
       if (res.errno === ERRORCODE) {
         this.goods = res.goods
+        this.deliveryPrice = res.deliveryPrice
+        this.minPrice = res.minPrice
         // $nextTick 是在下次DOM更新循环结束之后执行延迟回调,在修改数据之后使用
         // $nextTick 则可以在回调中获取更新后的DOM,(页面渲染完成之后调用)
         this.$nextTick(() => {
