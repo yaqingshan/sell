@@ -1,57 +1,62 @@
 <template>
-  <div class="goods">
-    <div class="menu-wrapper" ref="menuWrapper">
-      <ul>
-        <li class="menu-item border-bottom"
-            v-for="(item,index) in goods"
-            :key="index"
-            :class="{'current':currentIndex === index}"
-            @click="selectMenu(index,$event)">
-          <div class="txt">
-            <span v-show="item.type > 0" class="icon" :class="types[item.type]"></span>{{item.name}}
-        </div>
-        </li>
-      </ul>
-    </div>
-    <div class="foods-wrapper" ref="foodWrapper">
-      <ul>
-        <li class="food-list-item food-list-hook" v-for="(item,index) in goods" :key="index">
-          <h3 class="border-left">{{item.name}}</h3>
-          <ul>
-            <li class="food-item" v-for="(food,index) in item.foods" :key="index">
-              <div class="food border-bottom">
-                <div class="img">
-                  <img :src="food.icon" />
-                </div>
-                <div class="info">
-                  <h4>{{food.name}}</h4>
-                  <p class="desc">
-                    {{food.description}}
-                  </p>
-                  <div class="sale">
-                    月售{{food.sellCount}}份 好评率{{food.rating}}%
+  <div>
+    <div class="goods">
+      <div class="menu-wrapper" ref="menuWrapper">
+        <ul>
+          <li class="menu-item border-bottom"
+              v-for="(item,index) in goods"
+              :key="index"
+              :class="{'current':currentIndex === index}"
+              @click="selectMenu(index,$event)">
+            <div class="txt">
+              <span v-show="item.type > 0" class="icon" :class="types[item.type]"></span>{{item.name}}
+          </div>
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrapper" ref="foodWrapper">
+        <ul>
+          <li class="food-list-item food-list-hook" v-for="(item,index) in goods" :key="index">
+            <h3 class="border-left">{{item.name}}</h3>
+            <ul>
+              <li class="food-item" v-for="(food,index) in item.foods" :key="index">
+                <div class="food border-bottom">
+                  <div class="img">
+                    <img :src="food.icon" />
                   </div>
-                  <div class="price">
-                    ￥<span>{{food.price}}</span>
-                    <del v-show="food.oldPrice">￥{{food.oldPrice}}</del>
+                  <div class="info">
+                    <h4>{{food.name}}</h4>
+                    <p class="desc">
+                      {{food.description}}
+                    </p>
+                    <div class="sale">
+                      月售{{food.sellCount}}份 好评率{{food.rating}}%
+                    </div>
+                    <div class="price">
+                      ￥<span>{{food.price}}</span>
+                      <del v-show="food.oldPrice">￥{{food.oldPrice}}</del>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
+    <shop-cart></shop-cart>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import BScroll from 'better-scroll'
+import ShopCart from '@/common/cart/ShopCart'
 const ERRORCODE = 0
 export default {
   name: 'Goods',
   components: {
+    ShopCart
   },
   data () {
     return {
@@ -102,7 +107,7 @@ export default {
       // console.log(this.heightList)
     },
     selectMenu (index, event) {
-      // 阻止pc访问时点击事件触发
+      // 阻止pc访问时点击事件又一次触发
       if (!event._constructed) {
         return false
       }
@@ -152,6 +157,7 @@ export default {
       padding: 0 .24rem
       height: 1.08rem
       line-height: 150%
+      font-size: .22rem
       &.current
         background: #fff
         font-weight: 700
