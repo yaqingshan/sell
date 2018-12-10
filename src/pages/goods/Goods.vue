@@ -146,7 +146,7 @@ export default {
   position: absolute
   left: 0
   top: 3.48rem
-  bottom: 1.166rem
+  bottom: .96rem
   right: 0
   overflow: hidden
   display: flex

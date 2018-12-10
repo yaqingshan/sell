@@ -9,7 +9,7 @@
         </div>
         <div class="price-box">
           <div class="price border-right">
-            ￥0
+            ￥{{}}
           </div>
           <div class="desc">
             另需配送费￥{{deliveryPrice}}元
@@ -28,7 +28,21 @@ export default {
   name: 'ShopCart',
   props: {
     deliveryPrice: Number,
-    minPrice: Number
+    minPrice: Number,
+    selectGoods: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
+  computed: {
+    totalPrice () {
+
+    },
+    totalCount () {
+      
+    }
   }
 }
 </script>
@@ -44,24 +58,18 @@ export default {
     display: flex
     color: rgba(255,255,255,.4)
     background: #141d27
-    font-size: 0
-    margin-top: .2rem
   .cart-left
     flex: 1
     display: flex
     .bike
-      display: inline-block
-      vertical-align: top
       width: 1.12rem
       height: 1.12rem
       padding: .12rem
       margin: 0 .36rem
-      position: relative
-      top: -.2rem
+      margin-top: -.2rem
       box-sizing: border-box
       border-radius: 50%
       background: #141d27
-      vertical-align: top
       .inner
         width: 100%
         height: 100%
