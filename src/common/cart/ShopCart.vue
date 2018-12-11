@@ -6,10 +6,13 @@
           <div class="inner">
             <i class="iconfont">&#xe60a;</i>
           </div>
+          <div class="cart-count">
+            {{totalCount}}
+          </div>
         </div>
         <div class="price-box">
           <div class="price border-right">
-            ￥{{}}
+            ￥{{totalPrice}}
           </div>
           <div class="desc">
             另需配送费￥{{deliveryPrice}}元
@@ -32,16 +35,27 @@ export default {
     selectGoods: {
       type: Array,
       default () {
-        return []
+        return [{
+          price: 10,
+          count: 4
+        }]
       }
     }
   },
   computed: {
     totalPrice () {
-
+      let total = 0
+      this.selectGoods.forEach((item) => {
+        total += item.price * item.count
+      })
+      return total
     },
     totalCount () {
-      
+      let counts = 0
+      this.selectGoods.forEach((item) => {
+        counts += item.count
+      })
+      return counts
     }
   }
 }
@@ -70,6 +84,7 @@ export default {
       box-sizing: border-box
       border-radius: 50%
       background: #141d27
+      position: relative
       .inner
         width: 100%
         height: 100%
@@ -80,6 +95,22 @@ export default {
         justify-content: center
       .iconfont
         font-size: .48rem
+      .cart-count
+        position: absolute
+        right: -.2rem
+        top: -.1rem
+        z-index: 2
+        min-width: .48rem
+        height: .32rem
+        line-height: .22rem
+        font-size: .18rem
+        padding: .06rem .1rem
+        box-sizing: border-box
+        border-radius: .32rem
+        background: #f01414
+        color: #fff
+        text-align: center
+        box-shadow: 0 .04rem .08rem 0 rgba(0,0,0,.4)
     .price-box
       flex: 1
       display: flex
