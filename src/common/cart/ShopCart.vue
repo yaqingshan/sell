@@ -3,15 +3,15 @@
     <div class="cart">
       <div class="cart-left">
         <div class="bike">
-          <div class="inner">
-            <i class="iconfont">&#xe60a;</i>
+          <div class="inner" :class="{'highlight':totalCount>0}">
+            <i class="iconfont icon-shopping_cart"></i>
           </div>
-          <div class="cart-count">
+          <div class="cart-count" v-show="totalCount>0">
             {{totalCount}}
           </div>
         </div>
         <div class="price-box">
-          <div class="price border-right">
+          <div class="price border-right" :class="{'highlight':totalCount>0}">
             ￥{{totalPrice}}
           </div>
           <div class="desc">
@@ -19,8 +19,8 @@
           </div>
         </div>
       </div>
-      <div class="cart-right">
-        {{minPrice}}起送
+      <div class="cart-right" :class="payClass">
+        {{payDesc}}
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@ export default {
       default () {
         return [{
           price: 10,
-          count: 4
+          count: 1
         }]
       }
     }
@@ -51,11 +51,28 @@ export default {
       return total
     },
     totalCount () {
-      let counts = 0
+      let count = 0
       this.selectGoods.forEach((item) => {
-        counts += item.count
+        count += item.count
       })
-      return counts
+      return count
+    },
+    payDesc () {
+      if (this.totalPrice === 0) {
+        return `￥${this.minPrice}起送`
+      } else if (this.totalPrice > 0 && this.totalPrice < this.minPrice) {
+        let diff = this.minPrice - this.totalPrice
+        return `还差￥${diff}起送`
+      } else {
+        return '去结算'
+      }
+    },
+    payClass () {
+      if (this.totalPrice > 0 && this.totalPrice < this.minPrice) {
+        return ''
+      } else {
+        return 'enough'
+      }
     }
   }
 }
@@ -93,12 +110,15 @@ export default {
         display: flex
         align-items: center
         justify-content: center
+        &.highlight
+          background: rgb(0,160,220)
+          color: #ffffff
       .iconfont
         font-size: .48rem
       .cart-count
         position: absolute
-        right: -.2rem
-        top: -.1rem
+        right: .1rem
+        top: -.06rem
         z-index: 2
         min-width: .48rem
         height: .32rem
@@ -119,6 +139,8 @@ export default {
       font-weight: 700
       .price
         padding: .12rem .24rem .12rem 0
+        &.highlight
+          color: #ffffff
         &.border-right::before
           border-right: 1px solid rgba(255,255,255,.2)
       .desc
@@ -132,7 +154,10 @@ export default {
     align-items: center
     justify-content: center
     flex: 0 0 2.1rem
-    font-size: .32rem
+    font-size: .3rem
     font-weight: 700
+    &.enough
+      background: #00b43c
+      color: #ffffff
 
 </style>

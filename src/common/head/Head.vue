@@ -10,13 +10,13 @@
       <p class="desc"><span class="icon" :class="types[type]"></span>{{desc}}</p>
     </div>
     <div class="count" @click="handleShowDetail">
-      {{supports.length}}个<i class="iconfont">&#xe609;</i>
+      {{supports.length}}个<i class="iconfont icon-keyboard_arrow_right"></i>
     </div>
   </div>
   <div class="bulletin" @click="handleShowDetail">
     <span class="icon"></span>
     <p>{{seller.bulletin}}</p>
-    <i class="iconfont">&#xe609;</i>
+    <i class="iconfont icon-keyboard_arrow_right"></i>
   </div>
   <div class="bgimg">
     <img :src="seller.avatar" />
@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="detail-footer">
-        <i class="iconfont" @click="handleHideDetail">&#xe60f;</i>
+        <i class="iconfont icon-close" @click="handleHideDetail"></i>
       </div>
     </div>
   </transition>
