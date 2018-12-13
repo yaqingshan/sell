@@ -38,13 +38,16 @@
                     </div>
                   </div>
                 </div>
+                <div class="control">
+                  <control-cart :food="food"></control-cart>
+                </div>
               </li>
             </ul>
           </li>
         </ul>
       </div>
     </div>
-    <shop-cart :minPrice="minPrice" :deliveryPrice="deliveryPrice"></shop-cart>
+    <shop-cart :selectGoods="selectGoods" :minPrice="minPrice" :deliveryPrice="deliveryPrice"></shop-cart>
   </div>
 </template>
 
@@ -52,11 +55,13 @@
 import axios from 'axios'
 import BScroll from 'better-scroll'
 import ShopCart from '@/common/cart/ShopCart'
+import ControlCart from '@/common/cart/ControlCart'
 const ERRORCODE = 0
 export default {
   name: 'Goods',
   components: {
-    ShopCart
+    ShopCart,
+    ControlCart
   },
   data () {
     return {
@@ -130,6 +135,17 @@ export default {
         }
       }
       return 0
+    },
+    selectGoods () {
+      let foods = []
+      this.goods.forEach((item) => {
+        item.foods.forEach((food) => {
+          if (food.count) {
+            foods.push(food)
+          }
+        })
+      })
+      return foods
     }
   },
   mounted () {
@@ -200,6 +216,7 @@ export default {
         font-size: .24rem
         color: rgb(147,153,159)
       .food-item
+        position: relative
         padding: 0 .36rem
         .food
           padding: .36rem 0
@@ -239,4 +256,8 @@ export default {
         &:last-child
           .food.border-bottom::before
             border-bottom: 0
+        .control
+          position: absolute
+          right: .28rem
+          bottom: .3rem
 </style>
