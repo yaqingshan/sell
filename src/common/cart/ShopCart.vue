@@ -23,6 +23,14 @@
         {{payDesc}}
       </div>
     </div>
+    <!--动画小球-->
+    <div class="ball-container">
+      <transition name="drop" v-for="(ball, index) in balls" :key="index">
+        <div class="ball" v-show="ball.show">
+          <div class="inner"></div>
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -37,6 +45,30 @@ export default {
       default () {
         return []
       }
+    }
+  },
+  data () {
+    return {
+      balls: [{
+        show: false
+      },
+      {
+        show: false
+      },
+      {
+        show: false
+      },
+      {
+        show: false
+      },
+      {
+        show: false
+      }]
+    }
+  },
+  methods: {
+    drop (el) {
+      console.log(el)
     }
   },
   computed: {
@@ -156,5 +188,13 @@ export default {
     &.enough
       background: #00b43c
       color: #ffffff
-
+  .ball-container
+    position: fixed
+    left: .64rem
+    bottom: .44rem
+    .inner
+      width: .32rem
+      height: .32rem
+      border-radius: 50%
+      background: rgb(0,160,220)
 </style>

@@ -37,6 +37,7 @@ export default {
       } else {
         this.food.count++
       }
+      this.$emit('cartPlus', event.target)
     },
     countMinus () {
       if (!event._constructed) {

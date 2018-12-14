@@ -39,7 +39,7 @@
                   </div>
                 </div>
                 <div class="control">
-                  <control-cart :food="food"></control-cart>
+                  <control-cart :food="food" @cartPlus="listenCartPlus"></control-cart>
                 </div>
               </li>
             </ul>
@@ -47,7 +47,9 @@
         </ul>
       </div>
     </div>
-    <shop-cart :selectGoods="selectGoods" :minPrice="minPrice" :deliveryPrice="deliveryPrice"></shop-cart>
+    <shop-cart :selectGoods="selectGoods"
+               :minPrice="minPrice"
+               :deliveryPrice="deliveryPrice" ref="shopCart"></shop-cart>
   </div>
 </template>
 
@@ -123,6 +125,9 @@ export default {
       let foodList = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
       let el = foodList[index]
       this.foodScroll.scrollToElement(el, 200)
+    },
+    listenCartPlus (target) {
+      this.$refs.shopCart.drop(target)
     }
   },
   computed: {
