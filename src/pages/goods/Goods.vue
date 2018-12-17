@@ -126,6 +126,8 @@ export default {
       let el = foodList[index]
       this.foodScroll.scrollToElement(el, 200)
     },
+    // 获取controlCart子组件派发过来的事件
+    // 通过获取shopCart 组件 触发shopCart 组件的 drop方法 触发小球下落动画
     listenCartPlus (target) {
       this.$refs.shopCart.drop(target)
     }

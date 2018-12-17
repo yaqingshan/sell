@@ -37,6 +37,7 @@ export default {
       } else {
         this.food.count++
       }
+      // 再添加物品时，向父级组件（Good.vue） 派发事件 监听当时的加号按钮元素
       this.$emit('cartPlus', event.target)
     },
     countMinus () {

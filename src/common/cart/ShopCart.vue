@@ -63,12 +63,29 @@ export default {
       },
       {
         show: false
-      }]
+      }],
+      dropballs: []
     }
   },
   methods: {
     drop (el) {
-      console.log(el)
+      // console.log(el)
+      for (let i = 0; i < this.balls.length; i++) {
+        let ball = this.balls[i]
+        if (!ball.show) {
+          ball.show = true
+          ball.el = el
+          this.dropballs.push(ball)
+          return
+        }
+      }
+    }
+  },
+  transitions: {
+    drop: {
+      beforeEnter (el) {
+        console.log(el)
+      }
     }
   },
   computed: {
