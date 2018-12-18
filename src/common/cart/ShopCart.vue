@@ -31,12 +31,36 @@
         </div>
       </transition-group>
     </div>
+    <!-- 购物车列表 -->
+    <div class="cart-list">
+      <div class="cart-top border-bottom">
+        <div class="cart-title">购物车</div>
+        <div class="cleanup">清空</div>
+      </div>
+      <ul class="list">
+        <li class="list-item">
+          <div class="item-title">
+            xxxxxx
+          </div>
+          <div class="item-price">
+            20
+          </div>
+          <div class="item-control">
+            <!-- <control-cart></control-cart> -->
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
+import ControlCart from '@/common/cart/ControlCart'
 export default {
   name: 'ShopCart',
+  components: {
+    ControlCart
+  },
   props: {
     deliveryPrice: Number,
     minPrice: Number,
@@ -259,4 +283,30 @@ export default {
         transition: all .4s linear
       &.drop-enter-active
         transition: all .4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+  .cart-list
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    background: #ffffff
+    font-size: .28rem
+    color: rgb(7,17,27)
+    z-index: 22
+    .cart-top
+      display: flex
+      padding: .28rem
+      align-items: center
+      background: #f3f5f7
+      .cart-title
+        flex: 1
+      .cleanup
+        color: rgb(0,160,220)
+    .list
+      .list-item
+        display: flex
+        padding: .28rem
+        align-items: center
+        .item-title
+          flex: 1
+
 </style>

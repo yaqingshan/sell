@@ -49,7 +49,8 @@
     </div>
     <shop-cart :selectGoods="selectGoods"
                :minPrice="minPrice"
-               :deliveryPrice="deliveryPrice" ref="shopCart"></shop-cart>
+               :deliveryPrice="deliveryPrice" ref="shopCart">
+    </shop-cart>
   </div>
 </template>
 
