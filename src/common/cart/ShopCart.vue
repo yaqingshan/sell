@@ -1,61 +1,70 @@
 <template>
-  <div class="shopcart">
-    <div class="cart">
-      <div class="cart-left">
-        <div class="bike">
-          <div class="inner" :class="{'highlight':totalCount>0}">
-            <i class="iconfont icon-shopping_cart"></i>
+  <div>
+    <div class="shopcart">
+      <div class="cart" @click="toggle">
+        <div class="cart-left">
+          <div class="bike">
+            <div class="inner" :class="{'highlight':totalCount>0}">
+              <i class="iconfont icon-shopping_cart"></i>
+            </div>
+            <div class="cart-count" v-show="totalCount>0">
+              {{totalCount}}
+            </div>
           </div>
-          <div class="cart-count" v-show="totalCount>0">
-            {{totalCount}}
+          <div class="price-box">
+            <div class="price border-right" :class="{'highlight':totalCount>0}">
+              ￥{{totalPrice}}
+            </div>
+            <div class="desc">
+              另需配送费￥{{deliveryPrice}}元
+            </div>
           </div>
         </div>
-        <div class="price-box">
-          <div class="price border-right" :class="{'highlight':totalCount>0}">
-            ￥{{totalPrice}}
-          </div>
-          <div class="desc">
-            另需配送费￥{{deliveryPrice}}元
-          </div>
+        <div class="cart-right" :class="payClass" @click.stop.prevent="gopay">
+          {{payDesc}}
         </div>
       </div>
-      <div class="cart-right" :class="payClass">
-        {{payDesc}}
+      <!--动画小球-->
+      <div class="ball-container">
+        <transition-group name="drop" @before-enter="beforeEnter" @enter="dropEnter" @after-enter="afterEnter">
+          <div class="ball" v-for="(ball, index) in balls" :key="index" v-show="ball.show">
+            <div class="inner inner-hook"></div>
+          </div>
+        </transition-group>
       </div>
-    </div>
-    <!--动画小球-->
-    <div class="ball-container">
-      <transition-group name="drop" @before-enter="beforeEnter" @enter="dropEnter" @after-enter="afterEnter">
-        <div class="ball" v-for="(ball, index) in balls" :key="index" v-show="ball.show">
-          <div class="inner inner-hook"></div>
+      <!-- 购物车列表 -->
+      <transition name="fold">
+        <div class="cart-list" v-show="listShow">
+          <div class="cart-top border-bottom">
+            <div class="cart-title">购物车</div>
+            <div class="cleanup" @click="emptyBike">清空</div>
+          </div>
+          <div class="list" ref="listWrapper">
+            <ul>
+              <li class="list-item border-bottom" v-for="(item,index) in selectGoods" :key="index">
+                <div class="item-title">
+                  {{item.name}}
+                </div>
+                <div class="item-price">
+                  ￥{{item.price*item.count}}
+                </div>
+                <div class="item-control">
+                  <control-cart :food="item"></control-cart>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-      </transition-group>
+      </transition>
     </div>
-    <!-- 购物车列表 -->
-    <div class="cart-list">
-      <div class="cart-top border-bottom">
-        <div class="cart-title">购物车</div>
-        <div class="cleanup">清空</div>
-      </div>
-      <ul class="list">
-        <li class="list-item">
-          <div class="item-title">
-            xxxxxx
-          </div>
-          <div class="item-price">
-            20
-          </div>
-          <div class="item-control">
-            <!-- <control-cart></control-cart> -->
-          </div>
-        </li>
-      </ul>
-    </div>
+    <!-- 遮罩 -->
+    <div class="list-mask" @click="hideList" v-show="listShow"></div>
   </div>
 </template>
 
 <script>
 import ControlCart from '@/common/cart/ControlCart'
+import BScroll from 'better-scroll'
 export default {
   name: 'ShopCart',
   components: {
@@ -88,7 +97,8 @@ export default {
       {
         show: false
       }],
-      dropballs: []
+      dropballs: [],
+      fold: true
     }
   },
   methods: {
@@ -151,6 +161,29 @@ export default {
         ball.show = false
         el.style.display = 'none'
       }
+    },
+    // 购物车折叠、收起切换
+    toggle () {
+      if (!this.totalCount) {
+        return
+      }
+      this.fold = !this.fold
+    },
+    // 清空购物车
+    emptyBike () {
+      this.selectGoods.forEach((item) => {
+        item.count = 0
+      })
+    },
+    hideList () {
+      this.fold = true
+    },
+    gopay () {
+      if (this.totalPrice < this.minPrice) {
+        return
+      }
+      console.log(`需要支付${this.totalPrice}`)
+      window.alert(`需要支付${this.totalPrice}`)
     }
   },
   computed: {
@@ -184,6 +217,25 @@ export default {
       } else {
         return 'enough'
       }
+    },
+    // 是否展开购物车
+    listShow () {
+      if (!this.totalPrice) {
+        this.fold = true
+        return false
+      }
+      let show = !this.fold
+      // 购车列表出现时，执行事件
+      if (show) {
+        this.$nextTick(() => {
+          if (!this.scroll) {
+            this.scroll = new BScroll(this.$refs.listWrapper, {click: true})
+          } else {
+            this.scroll.refresh()
+          }
+        })
+      }
+      return show
     }
   }
 }
@@ -286,12 +338,13 @@ export default {
   .cart-list
     position: absolute
     left: 0
-    right: 0
-    bottom: 0
+    top: 0
+    width: 100%
     background: #ffffff
     font-size: .28rem
     color: rgb(7,17,27)
-    z-index: 22
+    z-index: -1
+    transform: translate3d(0,-100%,0)
     .cart-top
       display: flex
       padding: .28rem
@@ -302,11 +355,37 @@ export default {
       .cleanup
         color: rgb(0,160,220)
     .list
+      padding:0 .28rem
+      max-height: 4.34rem
+      overflow: hidden
       .list-item
         display: flex
-        padding: .28rem
+        padding: .28rem 0
         align-items: center
         .item-title
           flex: 1
-
+        .item-price
+          padding-left: .36rem
+          padding-right: .24rem
+        &:last-child
+          &.border-bottom::before
+            border-bottom: 0
+  .fold-enter-active, .fold-leave-active
+    transition: all .5s
+  .fold-enter, .fold-leave-to
+    transform: translate3d(0,0,0)
+.list-mask
+  position: fixed
+  left: 0
+  top: 0
+  bottom: 0
+  right: 0
+  z-index: 22
+  back-drop: blur(10px)
+  background: rgba(7,17,27,.6)
+.fade-enter-active, .fade-leave-active
+  transition: all .5s
+.fade-enter, .fade-leave-to
+  opacity: 0
+  background: rgba(7,17,27,0)
 </style>
