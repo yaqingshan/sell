@@ -25,7 +25,7 @@
     </div>
     <!--动画小球-->
     <div class="ball-container">
-      <transition-group name="drop" tag="div" @before-enter="beforeEnter" @enter="dropEnter" @after-enter="afterEnter">
+      <transition-group name="drop" @before-enter="beforeEnter" @enter="dropEnter" @after-enter="afterEnter">
         <div class="ball" v-for="(ball, index) in balls" :key="index" v-show="ball.show">
           <div class="inner inner-hook"></div>
         </div>

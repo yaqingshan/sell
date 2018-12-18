@@ -77,7 +77,7 @@ export default {
       font-size: .24rem
       color: #93999f
       padding: 0 .16rem
-      /* 动画样式 */
+  /* 动画样式 */
   .move-enter-active, .move-leave-active
     transition: all .3s linear
     transform: translate3d(0, 0, 0)
