@@ -25,11 +25,11 @@
     </div>
     <!--动画小球-->
     <div class="ball-container">
-      <transition name="drop" v-for="(ball, index) in balls" :key="index">
-        <div class="ball" v-show="ball.show">
-          <div class="inner"></div>
+      <transition-group name="drop" tag="div" @before-enter="beforeEnter" @enter="dropEnter" @after-enter="afterEnter">
+        <div class="ball" v-for="(ball, index) in balls" :key="index" v-show="ball.show">
+          <div class="inner inner-hook"></div>
         </div>
-      </transition>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -79,12 +79,53 @@ export default {
           return
         }
       }
-    }
-  },
-  transitions: {
-    drop: {
-      beforeEnter (el) {
-        console.log(el)
+    },
+    // el 为当前执行动画的对象
+    beforeEnter (el) {
+      // 设置动画开始之前的初始位置
+      let count = this.balls.length
+      while (count--) {
+        let ball = this.balls[count]
+        if (ball.show) {
+          // getBoundingClientRect用于获取某个元素相对于视窗的位置集合。集合中有top, right, bottom, left等属性
+          let rect = ball.el.getBoundingClientRect()
+          // console.log(rect)
+          let x = rect.left - 32
+          let y = -(window.innerHeight - rect.top - 22)
+          el.style.display = ''
+          el.style.webkitTransform = `translate3d(0,${y}px,0)`
+          el.style.transform = `translate3d(0,${y}px,0)`
+          let inner = el.getElementsByClassName('inner-hook')[0]
+          inner.style.webkitTransform = `translate3d(${x}px,0,0)`
+          inner.style.transform = `translate3d(${x}px,0,0)`
+        }
+      }
+    },
+    dropEnter (el, done) {
+      // 刷新动画效果
+      /* eslint-disable no-unused-vars */
+      // 触发浏览器重绘
+      let rf = el.offsetHeight
+      // 因为重绘，可能需要等待DOM完全加载完成，所以使用$nextTick优化体验
+      this.$nextTick(() => {
+        // 当没有变量时，要用单引号
+        el.style.webkitTransform = 'translate3d(0,0,0)'
+        el.style.transform = 'translate3d(0,0,0)'
+        let inner = el.getElementsByClassName('inner-hook')[0]
+        inner.style.webkitTransform = 'translate3d(0,0,0)'
+        inner.style.transform = 'translate3d(0,0,0)'
+        // Vue为了知道过渡的完成，必须设置相应的事件监听器。它可以是transitionend或 animationend
+        el.addEventListener('transitionend', done)
+      })
+      // 直接 done() 看不到过渡的动画效果
+      // done()
+    },
+    afterEnter (el) {
+      // 完成一次动画就删除一个dropBalls的小球
+      let ball = this.dropballs.shift()
+      if (ball) {
+        ball.show = false
+        el.style.display = 'none'
       }
     }
   },
@@ -206,12 +247,16 @@ export default {
       background: #00b43c
       color: #ffffff
   .ball-container
-    position: fixed
-    left: .64rem
-    bottom: .44rem
-    .inner
-      width: .32rem
-      height: .32rem
-      border-radius: 50%
-      background: rgb(0,160,220)
+    .ball
+      position: fixed
+      left: .64rem
+      bottom: .44rem
+      .inner
+        width: .32rem
+        height: .32rem
+        border-radius: 50%
+        background: rgb(0,160,220)
+        transition: all .4s linear
+      &.drop-enter-active
+        transition: all .4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
 </style>

@@ -78,14 +78,14 @@ export default {
       color: #93999f
       padding: 0 .16rem
       /* 动画样式 */
-  .move-enter-active, &.move-leave-active
+  .move-enter-active, .move-leave-active
     transition: all .3s linear
     transform: translate3d(0, 0, 0)
     opacity: 1
     .iconfont
       transform: rotate(0)
       transition: all .3s linear
-  .move-enter, &.move-leave-to
+  .move-enter, .move-leave-to
     transform: translate3d(.48rem, 0, 0)
     opacity: 0
     .iconfont
