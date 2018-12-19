@@ -16,10 +16,14 @@
       </div>
       <div class="foods-wrapper" ref="foodWrapper">
         <ul>
-          <li class="food-list-item food-list-hook" v-for="(item,index) in goods" :key="index">
+          <li class="food-list-item food-list-hook"
+              v-for="(item,index) in goods" :key="index">
             <h3 class="border-left">{{item.name}}</h3>
             <ul>
-              <li class="food-item" v-for="(food,index) in item.foods" :key="index">
+              <li class="food-item"
+                  @click="selectFood(food,$event)"
+                  v-for="(food,index) in item.foods"
+                  :key="index">
                 <div class="food border-bottom">
                   <div class="img">
                     <img :src="food.icon" />
@@ -51,6 +55,7 @@
                :minPrice="minPrice"
                :deliveryPrice="deliveryPrice" ref="shopCart">
     </shop-cart>
+    <goods-detail :selfood="selectedFood" ref="goodsDetail"></goods-detail>
   </div>
 </template>
 
@@ -59,12 +64,14 @@ import axios from 'axios'
 import BScroll from 'better-scroll'
 import ShopCart from '@/common/cart/ShopCart'
 import ControlCart from '@/common/cart/ControlCart'
+import GoodsDetail from './Detail'
 const ERRORCODE = 0
 export default {
   name: 'Goods',
   components: {
     ShopCart,
-    ControlCart
+    ControlCart,
+    GoodsDetail
   },
   data () {
     return {
@@ -73,7 +80,8 @@ export default {
       heightList: [],
       scrollY: 0,
       minPrice: null,
-      deliveryPrice: null
+      deliveryPrice: null,
+      selectedFood: {}
     }
   },
   methods: {
@@ -134,6 +142,13 @@ export default {
       this.$nextTick(() => {
         this.$refs.shopCart.drop(target)
       })
+    },
+    selectFood (food, event) {
+      if (!event._constructed) {
+        return false
+      }
+      this.selectedFood = food
+      this.$refs.goodsDetail.show()
     }
   },
   computed: {
