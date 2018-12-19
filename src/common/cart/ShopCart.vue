@@ -220,8 +220,10 @@ export default {
     },
     // 是否展开购物车
     listShow () {
+      // 缓存this 否则eslint报错
+      let that = this
       if (!this.totalPrice) {
-        this.fold = true
+        that.fold = true
         return false
       }
       let show = !this.fold
@@ -229,7 +231,7 @@ export default {
       if (show) {
         this.$nextTick(() => {
           if (!this.scroll) {
-            this.scroll = new BScroll(this.$refs.listWrapper, {click: true})
+            that.scroll = new BScroll(this.$refs.listWrapper, {click: true})
           } else {
             this.scroll.refresh()
           }
