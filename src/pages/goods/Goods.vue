@@ -21,7 +21,7 @@
             <h3 class="border-left">{{item.name}}</h3>
             <ul>
               <li class="food-item"
-                  @click="selectFood(food,$event)"
+                  @click.stop.prevent="selectFood(food,$event)"
                   v-for="(food,index) in item.foods"
                   :key="index">
                 <div class="food border-bottom">
@@ -55,7 +55,7 @@
                :minPrice="minPrice"
                :deliveryPrice="deliveryPrice" ref="shopCart">
     </shop-cart>
-    <goods-detail :selfood="selectedFood" ref="goodsDetail"></goods-detail>
+    <goods-detail :food="selectedFood" ref="goodsDetail"></goods-detail>
   </div>
 </template>
 

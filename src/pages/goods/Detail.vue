@@ -3,9 +3,23 @@
     <div class="detail" v-show="showFlag">
       <div class="content">
         <div class="head-img">
-          <img :src="selfood.image" />
+          <img :src="food.image" />
           <div class="back" @click="back">
             <span class="iconfont icon-arrow_lift"></span>
+          </div>
+        </div>
+        <div class="food-info">
+          <h3>{{food.name}}</h3>
+          <div class="info">
+            月售{{food.sellCount}}份 好评率{{food.rating}}%
+          </div>
+          <div class="price">
+            ￥{{food.price}}
+            <del>￥{{food.oldPrice}}</del>
+          </div>
+          <div class="put-in">
+            <div class="put-btn" v-show="!food.count" @click="putIn">加入购物车</div>
+            <control-cart :food="food" v-show="food.count>0"></control-cart>
           </div>
         </div>
       </div>
@@ -14,10 +28,15 @@
 </template>
 
 <script>
+import ControlCart from '@/common/cart/ControlCart'
+import Vue from 'vue'
 export default {
   name: 'GoodsDetail',
   props: {
-    selfood: Object
+    food: Object
+  },
+  components: {
+    ControlCart
   },
   data () {
     return {
@@ -30,6 +49,16 @@ export default {
     },
     back () {
       this.showFlag = false
+    },
+    putIn (event) {
+      console.log(event)
+      if (!event._constructed) {
+        return false
+      }
+      if (!this.food.count) {
+        Vue.set(this.food, 'count', 1)
+      }
+      this.$emit('cartPlus', event.target)
     }
   }
 }
@@ -65,4 +94,39 @@ export default {
       padding: .1rem
       color: rgba(255,255,255,.7)
       font-size: .4rem
+  .food-info
+    position: relative
+    padding: .36rem
+    background: #fff
+    h3
+      font-size: .28rem
+      line-height: 150%
+      color: rgb(7,17,27)
+      font-weight: 700
+    .info
+      padding: .16rem 0
+      font-size: .2em
+      color: rgb(147,153,159)
+    .price
+      font-size: .28rem
+      color: rgb(240,20,20)
+      font-weight: 700
+      del
+        // text-decoration: line-through
+        font-size: .2rem
+        padding-left: .12rem
+        color:  rgb(147,153,159)
+    .put-in
+      position: absolute
+      right: .36rem
+      bottom: .46rem
+      .put-btn
+        width: 1.48rem
+        height: .48rem
+        border-radius: .24rem
+        background: rgb(0,160,220)
+        color: #ffffff
+        font-size: .2rem
+        text-align: center
+        line-height: .48rem
 </style>
