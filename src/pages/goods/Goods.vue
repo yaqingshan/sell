@@ -138,6 +138,7 @@ export default {
     // 获取controlCart子组件派发过来的事件
     // 通过获取shopCart 组件 触发shopCart 组件的 drop方法 触发小球下落动画
     listenCartPlus (target) {
+      console.log(target)
       // 性能优化 异步执行
       this.$nextTick(() => {
         this.$refs.shopCart.drop(target)

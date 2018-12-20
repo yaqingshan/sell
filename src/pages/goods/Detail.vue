@@ -1,6 +1,6 @@
 <template>
   <transition name="move">
-    <div class="detail" v-show="showFlag">
+    <div class="detail" v-show="showFlag" ref="detailWrapper">
       <div class="content">
         <div class="head-img">
           <img :src="food.image" />
@@ -18,7 +18,7 @@
             <del>￥{{food.oldPrice}}</del>
           </div>
           <div class="put-in">
-            <div class="put-btn" v-show="!food.count" @click="putIn">加入购物车</div>
+            <div class="put-btn" v-show="!food.count || food.count===0" @click="addFirst">加入购物车</div>
             <control-cart :food="food" v-show="food.count>0"></control-cart>
           </div>
         </div>
@@ -30,6 +30,7 @@
 <script>
 import ControlCart from '@/common/cart/ControlCart'
 import Vue from 'vue'
+import Bscroll from 'better-scroll'
 export default {
   name: 'GoodsDetail',
   props: {
@@ -46,19 +47,24 @@ export default {
   methods: {
     show () {
       this.showFlag = true
+      this.$nextTick(() => {
+        if (!this.scroll) {
+          this.scroll = new Bscroll(this.$refs.detailWrapper, {click: true, tap: true})
+        } else {
+          this.scroll.refresh()
+        }
+      })
     },
     back () {
       this.showFlag = false
     },
-    putIn (event) {
+    addFirst (event) {
       console.log(event)
       if (!event._constructed) {
         return false
       }
-      if (!this.food.count) {
-        Vue.set(this.food, 'count', 1)
-      }
       this.$emit('cartPlus', event.target)
+      Vue.set(this.food, 'count', 1)
     }
   }
 }
