@@ -37,7 +37,8 @@ export default {
       } else {
         this.food.count++
       }
-      // 再添加物品时，向父级组件（Good.vue） 派发事件 监听当时的加号按钮元素
+      // 在添加物品时，向父级组件（Goods.vue） 派发事件 监听当时的加号按钮元素
+      // 派发事件在父级引入的组件上绑定监听 （Goods组件引入的 ControlCart组件上绑定)
       this.$emit('cartPlus', event.target)
     },
     countMinus () {
