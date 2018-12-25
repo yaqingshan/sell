@@ -1,9 +1,9 @@
 <template>
   <div class="ratingselect">
     <div class="select-tab border-bottom">
-      <div class="tab-item" @click="select(2,$event)" :class="{'active':selectType===2}">{{selectDesc.all}}<span>12</span></div>
-      <div class="tab-item" @click="select(0,$event)" :class="{'active':selectType===0}">{{selectDesc.positive}}<span>12</span></div>
-      <div class="tab-item negative" @click="select(1,$event)" :class="{'active':selectType===1}">{{selectDesc.negative}}<span>12</span></div>
+      <div class="tab-item" @click="select(2,$event)" :class="{'active':selectType===2}">{{selectDesc.all}}<span>{{ratings.length}}</span></div>
+      <div class="tab-item" @click="select(0,$event)" :class="{'active':selectType===0}">{{selectDesc.positive}}<span>{{getPostive}}</span></div>
+      <div class="tab-item negative" @click="select(1,$event)" :class="{'active':selectType===1}">{{selectDesc.negative}}<span>{{getNegative}}</span></div>
     </div>
     <div class="filter" :class="{'on':onlyContent}" @click="toggleOnly">
       <i class="iconfont icon-check_circle"></i>
@@ -13,8 +13,8 @@
 </template>
 
 <script>
-// const POSITIVE = 0
-// const NEGATIVE = 1
+const POSITIVE = 0
+const NEGATIVE = 1
 const ALL = 2
 export default {
   name: 'RatingSelect',
@@ -64,6 +64,20 @@ export default {
       }
       let only = this.onlyContent
       this.$emit('switchOnly', only)
+    }
+  },
+  computed: {
+    getPostive () {
+      let arr = this.ratings.filter((item) => {
+        return item.rateType === POSITIVE
+      })
+      return arr.length
+    },
+    getNegative () {
+      let arr = this.ratings.filter((item) => {
+        return item.rateType === NEGATIVE
+      })
+      return arr.length
     }
   }
 }
