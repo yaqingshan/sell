@@ -30,6 +30,10 @@
         <split></split>
         <div class="goods-comment">
           <h3>商品评价</h3>
+          <rating-select :ratings="food.ratings"
+                         :selectType="selectType"
+                         :onlyContent="onlyContent"
+                         :selectDesc="selectDesc" @ratingType="ratingType" @switchOnly="switchOnly"></rating-select>
         </div>
       </div>
     </div>
@@ -38,9 +42,13 @@
 
 <script>
 import ControlCart from '@/common/cart/ControlCart'
+import RatingSelect from '@/common/ratingselect/RatingSelect'
 import Vue from 'vue'
 import Bscroll from 'better-scroll'
 import Split from '@/common/split/Split'
+// const POSITIVE = 0
+// const NEGATIVE = 1
+const ALL = 2
 export default {
   name: 'GoodsDetail',
   props: {
@@ -48,16 +56,26 @@ export default {
   },
   components: {
     ControlCart,
-    Split
+    Split,
+    RatingSelect
   },
   data () {
     return {
-      showFlag: false
+      showFlag: false,
+      selectType: ALL,
+      onlyContent: true,
+      selectDesc: {
+        all: '全部',
+        positive: '推荐',
+        negative: '吐槽'
+      }
     }
   },
   methods: {
     show () {
       this.showFlag = true
+      this.selectType = ALL
+      this.onlyContent = true
       this.$nextTick(() => {
         if (!this.scroll) {
           this.scroll = new Bscroll(this.$refs.detailWrapper, {click: true, tap: true})
@@ -80,6 +98,13 @@ export default {
     // 在addFood函数中再派发一个事件，让goods父组件去监听，从而触发goods中的addFood函数
     addFood () {
       this.$emit('cartPlus', event.target)
+    },
+    // 监听从RatingSelect子组件传过来的当前tab选择项
+    ratingType (type) {
+      this.selectType = type
+    },
+    switchOnly (only) {
+      this.onlyContent = !only
     }
   }
 }
