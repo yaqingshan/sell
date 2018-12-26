@@ -79,8 +79,8 @@ export default {
       types: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
       heightList: [],
       scrollY: 0,
-      minPrice: null,
-      deliveryPrice: null,
+      minPrice: 0,
+      deliveryPrice: 0,
       selectedFood: {}
     }
   },

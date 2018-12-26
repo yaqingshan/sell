@@ -182,7 +182,8 @@ export default {
       if (this.totalPrice < this.minPrice) {
         return
       }
-      window.alert(`需要支付${this.totalPrice}`)
+      let payMoney = this.totalPrice + this.deliveryPrice
+      window.alert(`需要支付${payMoney}`)
     }
   },
   computed: {
@@ -211,12 +212,10 @@ export default {
       }
     },
     payClass () {
-      if (this.totalPrice >= 0 && this.totalPrice < this.minPrice) {
-        console.log(this.totalPrice+'1')
-        return ''
-      } else {
-        console.log(this.totalPrice+'2')
+      if (this.totalPrice && this.totalPrice >= this.minPrice) {
         return 'enough'
+      } else {
+        return ''
       }
     },
     // 是否展开购物车

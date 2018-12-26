@@ -22,7 +22,7 @@
             <control-cart :food="food" v-show="food.count>0" @cartPlus="addFood"></control-cart>
           </div>
         </div>
-        <split></split>
+        <split v-show="food.info"></split>
         <div class="goods-info" v-show="food.info">
           <h3>商品介绍</h3>
           <p>{{food.info}}</p>
@@ -37,13 +37,13 @@
                          @ratingType="ratingType"
                          @switchOnly="switchOnly"></rating-select>
            <div class="rating-list">
-             <ul v-show="food.ratings">
+             <ul v-show="isShow">
                <li class="list-item border-bottom"
                    v-show="needShow(item.rateType, item.text)"
                    v-for="(item, index) in food.ratings" :key="index">
                  <div class="item-top">
                    <div class="date">
-                     {{item.rateTime}}
+                     {{item.rateTime | formatDate}}
                    </div>
                    <div class="username">
                      {{item.username}}
@@ -57,8 +57,8 @@
                  </div>
                </li>
              </ul>
-             <div class="no-data" v-show="!food.ratings">
-              暂无评论
+             <div class="no-data" v-show="!isShow">
+              暂无评价
              </div>
            </div>
         </div>
@@ -70,11 +70,10 @@
 <script>
 import ControlCart from '@/common/cart/ControlCart'
 import RatingSelect from '@/common/ratingselect/RatingSelect'
+import {formatDate} from 'js/date.js'
 import Vue from 'vue'
 import Bscroll from 'better-scroll'
 import Split from '@/common/split/Split'
-// const POSITIVE = 0
-// const NEGATIVE = 1
 const ALL = 2
 export default {
   name: 'GoodsDetail',
@@ -90,7 +89,7 @@ export default {
     return {
       showFlag: false,
       selectType: ALL,
-      onlyContent: true,
+      onlyContent: false,
       selectDesc: {
         all: '全部',
         positive: '推荐',
@@ -102,7 +101,7 @@ export default {
     show () {
       this.showFlag = true
       this.selectType = ALL
-      this.onlyContent = true
+      this.onlyContent = false
       this.$nextTick(() => {
         if (!this.scroll) {
           this.scroll = new Bscroll(this.$refs.detailWrapper, {click: true, tap: true})
@@ -148,6 +147,23 @@ export default {
       } else {
         return type === this.selectType
       }
+    }
+  },
+  computed: {
+    // 是否有数据显示
+    isShow () {
+      if (this.food.ratings && this.food.ratings.length) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  filters: {
+    formatDate (time) {
+      let date = new Date(time)
+      // 第一个参数为时间 第二个参数为需要转化的格式
+      return formatDate(date, 'yyyy-MM-dd hh:mm')
     }
   }
 }
@@ -201,7 +217,7 @@ export default {
       color: rgb(240,20,20)
       font-weight: 700
       del
-        // text-decoration: line-through
+        text-decoration: line-through
         font-size: .2rem
         padding-left: .12rem
         color:  rgb(147,153,159)
