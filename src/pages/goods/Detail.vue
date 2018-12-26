@@ -23,7 +23,7 @@
           </div>
         </div>
         <split></split>
-        <div class="goods-info">
+        <div class="goods-info" v-show="food.info">
           <h3>商品介绍</h3>
           <p>{{food.info}}</p>
         </div>
@@ -33,7 +33,34 @@
           <rating-select :ratings="food.ratings"
                          :selectType="selectType"
                          :onlyContent="onlyContent"
-                         :selectDesc="selectDesc" @ratingType="ratingType" @switchOnly="switchOnly"></rating-select>
+                         :selectDesc="selectDesc"
+                         @ratingType="ratingType"
+                         @switchOnly="switchOnly"></rating-select>
+           <div class="rating-list">
+             <ul v-show="food.ratings">
+               <li class="list-item border-bottom"
+                   v-show="needShow(item.rateType, item.text)"
+                   v-for="(item, index) in food.ratings" :key="index">
+                 <div class="item-top">
+                   <div class="date">
+                     {{item.rateTime}}
+                   </div>
+                   <div class="username">
+                     {{item.username}}
+                   </div>
+                   <div class="avatar">
+                     <img :src="item.avatar"  />
+                   </div>
+                 </div>
+                 <div class="item-bot">
+                   <i class="iconfont" :class="{'icon-thumb_down':item.rateType === 1, 'icon-thumb_up':item.rateType === 0}"></i>{{item.text}}
+                 </div>
+               </li>
+             </ul>
+             <div class="no-data" v-show="!food.ratings">
+              暂无评论
+             </div>
+           </div>
         </div>
       </div>
     </div>
@@ -102,9 +129,25 @@ export default {
     // 监听从RatingSelect子组件传过来的当前tab选择项
     ratingType (type) {
       this.selectType = type
+      this.$nextTick(() => {
+        this.scroll.refresh()
+      })
     },
     switchOnly (only) {
       this.onlyContent = !only
+      this.$nextTick(() => {
+        this.scroll.refresh()
+      })
+    },
+    needShow (type, txt) {
+      if (this.onlyContent && !txt) {
+        return false
+      }
+      if (this.selectType === ALL) {
+        return true
+      } else {
+        return type === this.selectType
+      }
     }
   }
 }
@@ -185,4 +228,35 @@ export default {
       text-align: justify
   .goods-comment
     padding: .36rem
+    .rating-list
+      .list-item
+        padding: .32rem 0
+        .item-top
+          display: flex
+          align-items: center
+          font-size: .2rem
+          color: rgb(147,153,159)
+          .date
+            flex: 1
+          .avatar
+            margin-left: .12rem
+            width: .24rem
+            height: .24rem
+            border-radius: 50%
+            overflow: hidden
+            img
+              display: block
+              width: 100%
+              height: 100%
+        .item-bot
+          padding-top: .18rem
+          display: flex
+          align-items: center
+          font-size: .24rem
+          color: rgb(7,17,27)
+          line-height: 150%
+          .iconfont
+            margin-right: .08rem
+            &.icon-thumb_up
+              color: rgb(0,120,220)
 </style>
