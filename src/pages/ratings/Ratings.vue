@@ -1,5 +1,5 @@
 <template>
-  <div class="ratings">
+  <div class="ratings" ref="ratingsWrapper">
     <div class="score-wrapper">
       <div class="score-left">
         <div class="score">{{seller.score}}</div>
@@ -46,13 +46,33 @@
     </div>
     <div class="rating-wrapper">
       <ul>
-        <li class="rating-item" v-for="(item, index) in ratings" :key="index">
+        <!-- v-show="needShow(item.rateType, item.text)" -->
+        <li class="rating-item"
+            v-for="(item, index) in ratings" :key="index">
           <div class="avatar">
             <img :src="item.avatar">
           </div>
           <div class="info">
             <div class="user">
               <div class="name">{{item.username}}</div>
+              <div class="date">{{item.rateTime | formatDate}}</div>
+            </div>
+            <div class="info-star">
+              <div class="star">
+                <star :size="24" :score="item.score"></star>
+              </div>
+              <div class="time" v-show="item.deliveryTime">
+                {{item.deliveryTime}}分钟送达
+              </div>
+            </div>
+            <div class="txt">
+              {{item.text}}
+            </div>
+            <div class="symbol-recommend">
+              <i class="iconfont" :class="{'icon-thumb_down':item.rateType === 1, 'icon-thumb_up':item.rateType === 0}"></i>
+              <div class="recommend" v-show="item.recommend">
+                <div class="rec-item border" v-for="(item, index) in item.recommend" :key="index">{{item}}</div>
+              </div>
             </div>
           </div>
         </li>
@@ -66,6 +86,8 @@ import Star from '@/common/star/Star'
 import axios from 'axios'
 import Split from '@/common/split/Split'
 import RatingSelect from '@/common/ratingselect/RatingSelect'
+import {formatDate} from 'js/date.js'
+import BScroll from 'better-scroll'
 const ALL = 2
 export default {
   name: 'Ratings',
@@ -105,6 +127,17 @@ export default {
         this.ratings = res.ratings
       }
     },
+    show () {
+      this.selectType = ALL
+      this.onlyContent = false
+      this.$nextTick(() => {
+        if (!this.scroll) {
+          this.scroll = new Bscroll(this.$refs.ratingsWrapper, {click: true, tap: true})
+        } else {
+          this.scroll.refresh()
+        }
+      })
+    },
     // 监听从RatingSelect子组件传过来的当前tab选择项
     ratingType (type) {
       this.selectType = type
@@ -122,13 +155,25 @@ export default {
   mounted () {
     this.getSeller()
     this.getRatings()
+  },
+  filters: {
+    formatDate (time) {
+      let date = new Date(time)
+      return formatDate(date,'yyyy-MM-dd hh:mm')
+    }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.score-right >>> .star.star-36 .star-item
+.star >>> .star.star-36 .star-item
   margin-right: .16rem
+.ratings
+  position: absolute
+  left: 0
+  right: 0
+  top: 3.48rem
+  bottom: .92rem
 .score-wrapper
   padding: .36rem 0
   display: flex
@@ -164,14 +209,54 @@ export default {
   padding: 0 .36rem
 .rating-wrapper
   .rating-item
+    padding: .36rem
     display: flex
     .avatar
       width: .56rem
       height: .56rem
       border-radius: 50%
       overflow: hidden
+      margin-right: .24rem
       img
         display: block
         width: .56rem
         height: .56rem
+    .info
+      flex: 1
+      .user
+        display: flex
+        align-items: center
+        padding-bottom: .08rem
+        .name
+          flex: 1
+      .info-star
+        display: flex
+        align-items: center
+        .time
+          font-size: .2rem
+          color: rgb(147,153,159)
+      .txt
+        font-size: .24rem
+        padding-top: .12rem
+        line-height: 150%
+        color: rgb(7,17,27)
+      .symbol-recommend
+        display: flex
+        .iconfont
+          margin-top: .3rem
+          font-size: .24rem
+          margin-right: .08rem
+          &.icon-thumb_up
+            color: rgb(0,120,220)
+        .recommend
+          flex: 1
+          font-size: 0
+          .rec-item
+            display: inline-block
+            margin-left: .16rem
+            margin-top: .16rem
+            font-size: .18rem
+            color: rgb(147,153,159)
+            padding: .16rem .12rem
+
 </style>
