@@ -1,5 +1,6 @@
 <template>
-  <div class="ratings" ref="ratingsWrapper">
+<div class="ratings" ref="ratingsWrapper">
+  <div class="ratings-content">
     <div class="score-wrapper">
       <div class="score-left">
         <div class="score">{{seller.score}}</div>
@@ -46,8 +47,7 @@
     </div>
     <div class="rating-wrapper">
       <ul>
-        <!-- v-show="needShow(item.rateType, item.text)" -->
-        <li class="rating-item"
+        <li v-show="needShow(item.rateType, item.text)" class="rating-item border-bottom"
             v-for="(item, index) in ratings" :key="index">
           <div class="avatar">
             <img :src="item.avatar">
@@ -79,6 +79,7 @@
       </ul>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -89,6 +90,7 @@ import RatingSelect from '@/common/ratingselect/RatingSelect'
 import {formatDate} from 'js/date.js'
 import BScroll from 'better-scroll'
 const ALL = 2
+const ERRORCODE = 0
 export default {
   name: 'Ratings',
   components: {
@@ -112,7 +114,7 @@ export default {
     },
     getSellerSuccess (res) {
       res = res.data
-      if (res.errno === 0) {
+      if (res.errno === ERRORCODE) {
         this.seller = res.seller
       }
     },
@@ -123,20 +125,26 @@ export default {
     },
     getRatingsSuccess (res) {
       res = res.data
-      if (res.errno === 0) {
+      if (res.errno === ERRORCODE) {
         this.ratings = res.ratings
+        this.$nextTick(() => {
+          if (!this.scroll) {
+            this.scroll = new BScroll(this.$refs.ratingsWrapper, {click: true, tap: true})
+          } else {
+            this.scroll.refresh()
+          }
+        })
       }
     },
-    show () {
-      this.selectType = ALL
-      this.onlyContent = false
-      this.$nextTick(() => {
-        if (!this.scroll) {
-          this.scroll = new Bscroll(this.$refs.ratingsWrapper, {click: true, tap: true})
-        } else {
-          this.scroll.refresh()
-        }
-      })
+    needShow (type, txt) {
+      if (this.onlyContent && !txt) {
+        return false
+      }
+      if (this.selectType === ALL) {
+        return true
+      } else {
+        return type === this.selectType
+      }
     },
     // 监听从RatingSelect子组件传过来的当前tab选择项
     ratingType (type) {
@@ -159,7 +167,7 @@ export default {
   filters: {
     formatDate (time) {
       let date = new Date(time)
-      return formatDate(date,'yyyy-MM-dd hh:mm')
+      return formatDate(date, 'yyyy-MM-dd hh:mm')
     }
   }
 }
@@ -173,7 +181,8 @@ export default {
   left: 0
   right: 0
   top: 3.48rem
-  bottom: .92rem
+  bottom: 0
+  overflow: hidden
 .score-wrapper
   padding: .36rem 0
   display: flex
@@ -208,8 +217,9 @@ export default {
 .select-wrapper
   padding: 0 .36rem
 .rating-wrapper
+    padding: 0 .36rem
   .rating-item
-    padding: .36rem
+    padding: .36rem 0
     display: flex
     .avatar
       width: .56rem

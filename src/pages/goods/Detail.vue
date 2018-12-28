@@ -72,7 +72,7 @@ import ControlCart from '@/common/cart/ControlCart'
 import RatingSelect from '@/common/ratingselect/RatingSelect'
 import {formatDate} from 'js/date.js'
 import Vue from 'vue'
-import Bscroll from 'better-scroll'
+import BScroll from 'better-scroll'
 import Split from '@/common/split/Split'
 const ALL = 2
 export default {
@@ -104,7 +104,7 @@ export default {
       this.onlyContent = false
       this.$nextTick(() => {
         if (!this.scroll) {
-          this.scroll = new Bscroll(this.$refs.detailWrapper, {click: true, tap: true})
+          this.scroll = new BScroll(this.$refs.detailWrapper, {click: true, tap: true})
         } else {
           this.scroll.refresh()
         }
