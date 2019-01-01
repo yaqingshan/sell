@@ -7,7 +7,9 @@
     <div class="info">
       <div class="title"><span class="brand"></span>{{seller.name}}</div>
       <div class="delivery">{{seller.description}}/{{seller.deliveryTime}}分钟送达</div>
-      <p class="desc"><span class="icon" :class="types[type]"></span>{{desc}}</p>
+      <p class="desc">
+        <icon :sizeType="1" :type="type"></icon>
+      {{desc}}</p>
     </div>
     <div class="count" @click="handleShowDetail">
       {{supports.length}}个<i class="iconfont icon-keyboard_arrow_right"></i>
@@ -37,7 +39,7 @@
           </div>
           <ul>
             <li v-for="item in supports" :key="item.type">
-              <span class="icon" :class="types[item.type]"></span>
+              <icon :sizeType="2" :type="item.type"></icon>
               <p>{{item.description}}</p>
             </li>
           </ul>
@@ -62,11 +64,13 @@
 <script>
 import axios from 'axios'
 import Star from './../star/Star'
+import Icon from './../icon/Icon'
 const ERRORCODE = 0
 export default {
   name: 'CommonHead',
   components: {
-    Star
+    Star,
+    Icon
   },
   data () {
     return {
@@ -74,9 +78,7 @@ export default {
       supports: [],
       type: null,
       desc: '',
-      showDetail: false,
-      // 用于显示图标
-      types: ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+      showDetail: false
     }
   },
   methods: {
@@ -169,20 +171,6 @@ export default {
         font-size: .2rem
         line-height: 150%
         padding-top: .12rem
-        .icon
-          width: .24rem
-          height: .24rem
-          margin-right: .08rem
-          &.decrease
-            bg-image('images/decrease_1')
-          &.discount
-            bg-image('images/discount_1')
-          &.guarantee
-            bg-image('images/guarantee_1')
-          &.invoice
-            bg-image('images/invoice_1')
-          &.special
-            bg-image('images/special_1')
     .count
       height: .48rem
       line-height: .48rem
@@ -267,21 +255,6 @@ export default {
             display: flex
             align-items: center
             margin-bottom: .12rem
-            .icon
-              display: block
-              width: .32rem
-              height: .32rem
-              margin-right: .12rem
-              &.decrease
-                bg-image('images/decrease_2')
-              &.discount
-                bg-image('images/discount_2')
-              &.guarantee
-                bg-image('images/guarantee_2')
-              &.invoice
-                bg-image('images/invoice_2')
-              &.special
-                bg-image('images/special_2')
             p
               font-size: .24rem
               line-height: 150%

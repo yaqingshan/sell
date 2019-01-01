@@ -9,7 +9,10 @@
               :class="{'current':currentIndex === index}"
               @click="selectMenu(index,$event)">
             <div class="txt">
-              <span v-show="item.type > 0" class="icon" :class="types[item.type]"></span>{{item.name}}
+              <div class="icon-box" v-show="item.type > 0">
+                <icon :sizeType="3" :type="item.type"></icon>
+              </div>
+              {{item.name}}
           </div>
           </li>
         </ul>
@@ -65,18 +68,19 @@ import BScroll from 'better-scroll'
 import ShopCart from '@/common/cart/ShopCart'
 import ControlCart from '@/common/cart/ControlCart'
 import GoodsDetail from './Detail'
+import Icon from '@/common/icon/Icon'
 const ERRORCODE = 0
 export default {
   name: 'Goods',
   components: {
     ShopCart,
     ControlCart,
-    GoodsDetail
+    GoodsDetail,
+    Icon
   },
   data () {
     return {
       goods: [],
-      types: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
       heightList: [],
       scrollY: 0,
       minPrice: 0,
@@ -213,24 +217,14 @@ export default {
       .txt
         display:table-cell
         vertical-align: middle
-        .icon
+        .icon-box
           display: inline-block
+          width: .24rem
+          height: .24rem
           margin-right: .04rem
           position: relative
           top: .02rem
-          width: .24rem
-          height: .24rem
           overflow: hidden
-          &.decrease
-            bg-image('images/decrease_3')
-          &.discount
-            bg-image('images/discount_3')
-          &.guarantee
-            bg-image('images/guarantee_3')
-          &.invoice
-            bg-image('images/invoice_3')
-          &.special
-            bg-image('images/special_3')
   .foods-wrapper
     flex: 1
     .food-list-item
