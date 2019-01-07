@@ -94,6 +94,7 @@ import Split from '@/common/split/Split'
 import Star from '@/common/star/Star'
 import Icon from '@/common/icon/Icon'
 import {urlParse} from 'js/util.js'
+import {mapState, mapMutations} from 'vuex'
 const ERRORCODE = 0
 export default {
   name: 'Seller',
@@ -149,7 +150,9 @@ export default {
         return
       }
       this.isFavorite = !this.isFavorite
+      this.tagFavorite(this.isFavorite)
     },
+    ...mapMutations(['tagFavorite']),
     getParam () {
       let queryParam = urlParse()
       console.log(queryParam)
@@ -159,7 +162,10 @@ export default {
   computed: {
     favoriteTxt () {
       return this.isFavorite ? '已收藏' : '收藏'
-    }
+    },
+    ...mapState({
+      current: 'isFavorite'
+    })
   },
   watch: {
     'seller' () {
