@@ -2,7 +2,9 @@
   <div id="app">
     <common-head></common-head>
     <common-tab></common-tab>
-    <router-view/>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 

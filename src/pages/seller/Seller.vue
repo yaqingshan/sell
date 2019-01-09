@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="collection" @click="toggleFavorite">
-            <div class="icon icon-favorite" :class="{'active': isFavorite}"></div>
+            <div class="icon icon-favorite" :class="{'active': this.isFavorite}"></div>
             <div class="txt">{{favoriteTxt}}</div>
           </div>
         </div>
@@ -121,7 +121,6 @@ export default {
       if (res.errno === ERRORCODE) {
         this.seller = res.seller
         this.seller = Object.assign({}, this.seller, res.seller)
-        console.log(this.seller)
         this.picLength = res.seller.pics.length
       }
     },
@@ -157,6 +156,15 @@ export default {
       let queryParam = urlParse()
       console.log(queryParam)
       this.seller['id'] = queryParam.id
+    },
+    // loacalStorage 存储的数据 返回的是string 类型 需要转化为布尔型
+    setValue () {
+      if (this.current === 'false') {
+        this.isFavorite = false
+      } else {
+        this.isFavorite = true
+      }
+      console.log(this.isFavorite)
     }
   },
   computed: {
@@ -181,12 +189,10 @@ export default {
         this.scroll.refresh()
       }
     })
+    this.setValue()
   },
   created () {
     this.getParam()
-  },
-  updated () {
-    // this.picScroll()
   }
 }
 </script>

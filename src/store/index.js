@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import mutations from './mutations'
 import state from './state'
 Vue.use(Vuex)
-export default Vuex.Store(){
-  state,
-  mutations
-}
+export default new Vuex.Store({
+  mutations,
+  state
+})

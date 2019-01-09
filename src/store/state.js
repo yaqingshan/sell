@@ -7,4 +7,3 @@ try {
 export default {
   isFavorite: defaultFavorite
 }
-
