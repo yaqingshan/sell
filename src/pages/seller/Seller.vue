@@ -89,12 +89,14 @@
 
 <script>
 import axios from 'axios'
+import Vue from 'vue'
 import BScroll from 'better-scroll'
 import Split from '@/common/split/Split'
 import Star from '@/common/star/Star'
 import Icon from '@/common/icon/Icon'
 import {urlParse} from 'js/util.js'
-import {mapState, mapMutations} from 'vuex'
+import {saveToLocal, readFromLocal} from 'js/store.js'
+// import {mapState, mapMutations} from 'vuex'
 const ERRORCODE = 0
 export default {
   name: 'Seller',
@@ -120,7 +122,6 @@ export default {
       res = res.data
       if (res.errno === ERRORCODE) {
         this.seller = res.seller
-        this.seller = Object.assign({}, this.seller, res.seller)
         this.picLength = res.seller.pics.length
       }
     },
@@ -149,31 +150,37 @@ export default {
         return
       }
       this.isFavorite = !this.isFavorite
-      this.tagFavorite(this.isFavorite)
+      console.log(this.seller.id)
+      saveToLocal(this.seller.id, 'favorite', this.isFavorite)
+      // this.tagFavorite(this.isFavorite)
     },
-    ...mapMutations(['tagFavorite']),
+    // ...mapMutations(['tagFavorite']),
     getParam () {
       let queryParam = urlParse()
-      console.log(queryParam)
-      this.seller['id'] = queryParam.id
+      // console.log(queryParam)
+      // 给对象添加属性时,需要引入vue使用set设置
+      Vue.set(this.seller, 'id', queryParam.id)
     },
-    // loacalStorage 存储的数据 返回的是string 类型 需要转化为布尔型
-    setValue () {
-      if (this.current === 'false') {
-        this.isFavorite = false
-      } else {
-        this.isFavorite = true
-      }
-      console.log(this.isFavorite)
+    getValue (id) {
+      this.isFavorite = readFromLocal(id, 'favorite', false)
     }
+    // loacalStorage 存储的数据 返回的是string 类型 需要转化为布尔型
+    // setValue () {
+    //   if (this.current === 'false') {
+    //     this.isFavorite = false
+    //   } else {
+    //     this.isFavorite = true
+    //   }
+    //   console.log(this.isFavorite)
+    // }
   },
   computed: {
     favoriteTxt () {
       return this.isFavorite ? '已收藏' : '收藏'
-    },
-    ...mapState({
-      current: 'isFavorite'
-    })
+    }
+    // ...mapState({
+    //   current: 'isFavorite'
+    // })
   },
   watch: {
     'seller' () {
@@ -189,10 +196,11 @@ export default {
         this.scroll.refresh()
       }
     })
-    this.setValue()
+    // this.setValue()
   },
-  created () {
+  updated () {
     this.getParam()
+    this.getValue(this.seller.id)
   }
 }
 </script>
